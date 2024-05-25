@@ -64,26 +64,42 @@ const images = [
   },
 ];
 
-function imageTemplate(img) {
+const imageTemplate = ({preview, original, description}) => {
     return `<li class="gallery-item">
-  <a class="gallery-link" href=${img.original}>
+  <a class="gallery-link" href=${original}>
     <img
       class="gallery-image"
-      src=${img.preview}
-      data-source=${img.original}
-      alt=${img.description}
+      src=${preview}
+      data-source=${original}
+      alt=${description}
     />
   </a>
 </li>`
 };
+
 
 function imagesTemplate(arr) {
     return arr.map(imageTemplate).join('');
 }
 
 const markup = imagesTemplate(images);
-const ulElem = document.querySelector('gallery');
-console.log(ulElem);
+const ulElem = document.querySelector('.gallery');
+// console.log(ulElem);
 
 ulElem.innerHTML = markup;
+
+// const galleryElem = document.querySelector('.gallery');
+// console.log(galleryElem);
+
+ulElem.addEventListener('click', (event) => {
+    if (event.target === event.currentTarget) return;
+    event.preventDefault();
+    // console.log(event.target.dataset.source);
+
+    const instance = basicLightbox.create(`
+    <img src=${event.target.dataset.source} width="1112" height="640">
+    `)
+
+    instance.show()
+});
 
