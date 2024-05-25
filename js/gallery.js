@@ -64,8 +64,8 @@ const images = [
   },
 ];
 
-const imageTemplate = ({preview, original, description}) => {
-    return `<li class="gallery-item">
+const imageTemplate = ({ preview, original, description }) => {
+  return `<li class="gallery-item">
   <a class="gallery-link" href=${original}>
     <img
       class="gallery-image"
@@ -74,32 +74,41 @@ const imageTemplate = ({preview, original, description}) => {
       alt=${description}
     />
   </a>
-</li>`
+</li>`;
 };
 
-
 function imagesTemplate(arr) {
-    return arr.map(imageTemplate).join('');
+  return arr.map(imageTemplate).join("");
 }
 
 const markup = imagesTemplate(images);
-const ulElem = document.querySelector('.gallery');
+const ulElem = document.querySelector(".gallery");
 // console.log(ulElem);
 
 ulElem.innerHTML = markup;
 
-// const galleryElem = document.querySelector('.gallery');
-// console.log(galleryElem);
+// -----------------------------------------------------------
 
-ulElem.addEventListener('click', (event) => {
-    if (event.target === event.currentTarget) return;
-    event.preventDefault();
-    // console.log(event.target.dataset.source);
+ulElem.addEventListener("click", createModal);
 
-    const instance = basicLightbox.create(`
-    <img src=${event.target.dataset.source} width="1112" height="640">
-    `)
+function createModal(event) {
+  if (event.target === event.currentTarget) return;
+  event.preventDefault();
+  const markup = `<img src=${event.target.dataset.source} width="1112" height="640">`;
 
-    instance.show()
-});
+  const instance = basicLightbox.create(markup, {
+    onShow: (instance) => {
+      window.addEventListener("keydown", onModalClose);
+    },
+    onClose: (instance) => {
+      window.removeEventListener("keydown", onModalClose);
+    },
+  });
+  instance.show();
 
+  function onModalClose(e) {
+    if (e.code === "Escape") {
+      instance.close();
+    }
+  }
+}
